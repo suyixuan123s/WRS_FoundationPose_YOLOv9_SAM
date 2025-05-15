@@ -1,0 +1,65 @@
+"""
+Author: Yixuan Su
+Date: 2025/03/29 20:26
+File: get_transformation_object_to_world.py
+Description: 
+
+"""
+import os
+import open3d as o3d
+import numpy as np
+
+# [[0.999848 -0.011218 -0.013369 0.450000]
+#  [0.000000 -0.766044 0.642788 -0.620000]
+#  [-0.017452 -0.642690 -0.765928 0.890000]
+#  [0.000000 0.000000 0.000000 1.000000]]
+
+transformation_camera_to_sim = np.array([[0.999848, -0.011218, -0.013369, 0.450000],
+                                         [0.000000, -0.766044, 0.642788, -0.620000],
+                                         [-0.017452, -0.642690, -0.765928, 0.890000],
+                                         [0.000000, 0.000000, 0.000000, 1.000000]])
+
+object_to_camera = np.array([
+    [-0.9980491399765015, 0.05256980657577515, 0.0336814746260643, 0.17663449048995972],
+    [0.06021632999181747, 0.6679946780204773, 0.7417258024215698, 0.23415674269199371],
+    [0.016493292525410652, 0.7423068881034851, -0.6698569655418396, 0.9223406314849854],
+    [0.0, 0.0, 0.0, 1.0]
+])
+
+# 计算物体到世界坐标系的变换矩阵
+transformation_object_to_world = transformation_camera_to_sim @ object_to_camera
+
+# 指定文件路径
+file_path = r"E:\ABB-Project\ABB_wrs_hu\suyixuan\Transformation_Object_to_World\10ml_rack_20250408\transformation_object_to_world2.txt"
+
+# 检查目录是否存在,如果不存在则创建
+os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+# 将结果保存到文件
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write("相机到仿真坐标系的外参 (Camera to Simulation):\n")
+    f.write(np.array2string(transformation_object_to_world, formatter={'float_kind': lambda x: f"{x:.6f}"}))
+print(f"文件已保存到: {file_path}")
+
+print("Object to World Transformation Matrix:")
+print(transformation_object_to_world)
+
+# # T = rm.homomat_from_posrot(pos=np.array([0.37, -0.68, 0.53]),  # TODO
+# #                            rot=rm.rotmat_from_euler(ai=np.pi * (-131) / 180, aj=np.pi * (-1.5) / 180,
+# #                                                     ak=np.pi * (-3) / 180))
+# K = [[606.6265258789062, 0, 324.2806701660156], [0, 606.6566772460938, 241.14862060546875], [0, 0, 1]]
+#
+# # 转换到像素坐标系,找到像素坐标系还是图像坐标系.   点是像素坐标系. 图像坐标系是中心点.  内参是什么转化到哪里？？
+# inv_T = np.linalg.inv(camera_to_table_transform)
+# obj_camera = np.dot(inv_T, obj_tablepos.T)
+#
+# obj_camera_noralmized=obj_camera[:3]/obj_camera[2]
+# obj_pic = K@ obj_camera_noralmized
+# print("obj_ti   in pic pos :", obj_pic)
+
+
+# Object to World Transformation Matrix:
+# [[ 0.99257126 -0.03394252 -0.11683419  0.6488455 ]
+#  [ 0.0553834  -0.72897782  0.6822935  -0.26660331]
+#  [-0.1083282  -0.68369574 -0.72168176  0.07020821]
+#  [ 0.          0.          0.          1.        ]]
